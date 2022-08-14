@@ -5,14 +5,7 @@ import numpy as np
 from scrapper import *
 
 urls_to_ping = [
-    'http://vivaldi-chronos.com/affaires-et-patrimoine/droit-des-societes/en-general/la-regle-de-lunanimite-du-vote'
-    '-des-associes-en-societe-civile/',
-    'http://vivaldi-chronos.com/affaires-et-patrimoine/droit-des-societes/poursuite-dune-activite-deficitaire-quid-de'
-    '-la-responsabilite-du-dirigeant/',
-    'http://vivaldi-chronos.com/transmission-d-entreprise/cession-d-entreprise-transmission-d-entreprise'
-    '/lindispensable-notification-du-projet-de-cession-de-parts-en-sarl/',
-    'http://vivaldi-chronos.com/affaires-et-patrimoine/droit-des-societes/en-general/anonymat-et-secret-du-vote-des'
-    '-associes/',
+   'https://codepen.io/',
 ]
 
 ##get_array_proxies()

@@ -2,60 +2,48 @@ import time
 
 import requests
 from bs4 import BeautifulSoup
+import urllib
+import httplib2
 
 scraped_urls = [
     'https://proxyhub.me/fr/be-free-proxy-list.html',
-    'https://proxyhub.me/fr/fr-free-proxy-list.html',
-    'https://proxyhub.me/en/fr-free-proxy-list.html',
-    'https://proxyhub.me/fr/be-free-proxy-list.html',
-    'https://proxyhub.me/fr/fr-free-proxy-list.html',
-    'https://proxyhub.me/en/fr-free-proxy-list.html',
-    'https://proxyhub.me/fr/be-free-proxy-list.html',
-    'https://proxyhub.me/fr/fr-free-proxy-list.html',
-    'https://proxyhub.me/en/fr-free-proxy-list.html',
-    'https://proxyhub.me/fr/be-free-proxy-list.html',
-    'https://proxyhub.me/fr/fr-free-proxy-list.html',
-    'https://proxyhub.me/en/fr-free-proxy-list.html',
-    'https://proxyhub.me/fr/be-free-proxy-list.html',
-    'https://proxyhub.me/fr/fr-free-proxy-list.html',
-    'https://proxyhub.me/en/fr-free-proxy-list.html',
-    'https://proxyhub.me/fr/be-free-proxy-list.html',
-    'https://proxyhub.me/fr/fr-free-proxy-list.html',
-    'https://proxyhub.me/en/fr-free-proxy-list.html',
-    'https://proxyhub.me/fr/be-free-proxy-list.html',
-    'https://proxyhub.me/fr/fr-free-proxy-list.html',
-    'https://proxyhub.me/en/fr-free-proxy-list.html',
-    'https://proxyhub.me/fr/be-free-proxy-list.html',
-    'https://proxyhub.me/fr/fr-free-proxy-list.html',
-    'https://proxyhub.me/en/fr-free-proxy-list.html',
-    'https://proxyhub.me/fr/be-free-proxy-list.html',
-    'https://proxyhub.me/fr/fr-free-proxy-list.html',
     'https://proxyhub.me/en/fr-free-proxy-list.html',
 ]
 
 
 def get_array_proxies():
     counter = 0
+
     for url in scraped_urls:
-        html_content = requests.get(url).text
-        soup = BeautifulSoup(html_content, "lxml")
-        data = []
-        gdp_table = soup.find("table", attrs={"class": "table"})
-        rows = gdp_table.find_all('tr')
+        page = 1
+        maxpages = 50
+        try:
+            while page < maxpages:
 
-        for tr in rows[1:]:
-            data.append([td.get_text(strip=True) for td in tr.find_all('td')])
+                html_content = requests.get(url, cookies={'page': str(page)}).text
+                soup = BeautifulSoup(html_content, "lxml")
+                data = []
+                gdp_table = soup.find("table", attrs={"class": "table"})
+                rows = gdp_table.find_all('tr')
 
-        for row in data:
-            ip = row[0]
-            port = row[1]
+                for tr in rows[1:]:
+                    data.append([td.get_text(strip=True) for td in tr.find_all('td')])
 
-            with open("proxies", "a") as proxies:
-                proxies.write(str(ip + ":" + port + "\n"))
+                for row in data:
+                    ip = row[0]
+                    port = row[1]
 
-        counter += 1
-        time.sleep(2)
+                    with open("proxies", "a") as proxies:
+                        proxies.write(str(ip + ":" + port + "\n"))
+                page += 1
+                counter += 1
+                print("Number of page scrapped : " + page + '\n')
+        except:
+            pass
         print("WAITING SCRAPPING : Procress " + str(counter) + " requests on " + str(len(scraped_urls)))
+        with open("proxies", "r") as proxies:
+            len_proxies = sum(1 for line in proxies)
+        print("Number of proxies scrapped : " + str(len_proxies))
     return
 
 
@@ -73,6 +61,7 @@ def cleaning_proxies():
             file.write("%s\n" % proxie)
         file.close()
     return
+
 
 def clear_proxies():
     with open('proxies', "w") as file:
